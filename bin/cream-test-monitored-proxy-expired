@@ -80,7 +80,7 @@ of the long options of this test'''))
 
     parameters.parseConfigFileAndOptList(sys.argv[1:], confFileName)
         
-    testsuite_utils.mainLogger.setup(parameters.logConf)
+    testsuite_utils.setupLogger(parameters.logConf)
 
     if parameters.vo=='':
         print "Vo name is not defined"

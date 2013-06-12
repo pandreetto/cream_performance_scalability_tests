@@ -76,7 +76,6 @@ def checkEncryptedKey(file):
     
 class Parameters:
     def __init__(self, shortDescr, synopsis, description):
-        print "init di testsuite_utils.Parameters"
         self.pTable = {}
         self._shortDescr = shortDescr
         self._synopsis = synopsis
@@ -366,35 +365,12 @@ def getCACertDir():
     if not os.path.isdir(caCertDir):
         raise Exception, "Cannot find CA certificate directory " + caCertDir
     return caCertDir
-        
-class Logger:
-    
-    def __init__(self):
-        self.main = None
-    
-    def setup(self, confFile):
 
-        # This is just a patch for registering the configuration file
-        if confFile<>None and confFile<>'':
-            logging.config.fileConfig(confFile)
-        self.main = logging.getLogger()
-        
-    def get_instance(self, classid=""):
-        if classid=='':
-            return self.main
-        return logging.getLogger(classid)
-        
-    def debug(self, message):
-        self.main.debug(message)
-        
-    def error(self, message):
-        self.main.error(message)
-        
-    def warn(self, message):
-        self.main.warn(message)
-
-    def info(self, message):
-        self.main.info(message)
+def setupLogger(confFile):
+    if confFile<>None and confFile<>'' and os.path.exists(confFile):
+        logging.config.fileConfig(confFile)
+    else:
+        logging.basicConfig()
         
 class InterfaceManager:
     
@@ -435,23 +411,19 @@ class InterfaceManager:
 
 if 'testsuite_utils' in __name__:
     global cmdTable
-    if os.environ.has_key("GLITE_LOCATION"):
-        gliteLocation = os.environ["GLITE_LOCATION"]
-    else:
-        gliteLocation = "/opt/glite"
         
-    cmdTable = { "submit": gliteLocation + "/bin/glite-ce-job-submit",
-                       "status": gliteLocation + "/bin/glite-ce-job-status",
-                       "cancel": gliteLocation + "/bin/glite-ce-job-cancel",
-                       "purge": gliteLocation + "/bin/glite-ce-job-purge",
-                       "subscribe": gliteLocation + "/bin/glite-ce-monitor-subscribe",
-                       "unsubscribe": gliteLocation + "/bin/glite-ce-monitor-unsubscribe",
-                       "lease": gliteLocation + "/bin/glite-ce-job-lease",
-                       "proxy-init": gliteLocation + "/bin/voms-proxy-init",
-                       "proxy-info": gliteLocation + "/bin/voms-proxy-info",
-                       "delegate": gliteLocation + "/bin/glite-ce-delegate-proxy",
-                       "proxy-renew": gliteLocation + "/bin/glite-ce-proxy-renew",
-                 "event": gliteLocation + "/bin/glite-ce-event-query"};
+    cmdTable = {"submit": "/usr/bin/glite-ce-job-submit",
+                "status": "/usr/bin/glite-ce-job-status",
+                "cancel": "/usr/bin/glite-ce-job-cancel",
+                "purge": "/usr/bin/glite-ce-job-purge",
+                "subscribe": "/usr/bin/glite-ce-monitor-subscribe",
+                "unsubscribe": "/usr/bin/glite-ce-monitor-unsubscribe",
+                "lease": "/usr/bin/glite-ce-job-lease",
+                "proxy-init": "/usr/bin/voms-proxy-init",
+                "proxy-info": "/usr/bin/voms-proxy-info",
+                "delegate": "/usr/bin/glite-ce-delegate-proxy",
+                "proxy-renew": "/usr/bin/glite-ce-proxy-renew",
+                "event": "/usr/bin/glite-ce-event-query"};
 
     global hostname
     proc = popen2.Popen4('/bin/hostname -f')
@@ -462,9 +434,6 @@ if 'testsuite_utils' in __name__:
     applicationTS = time.time()
     global applicationID
     applicationID = "%d.%f" % (os.getpid(), applicationTS)
-    
-    global mainLogger
-    mainLogger = Logger()
     
     global failureReList
     failureReList = []

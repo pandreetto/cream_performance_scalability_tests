@@ -1,13 +1,15 @@
 
 import threading
 import time
+import logging
 import popen2
 
 import job_utils, testsuite_utils
 from submit_pool import JobSubmitterPool
 
 class JobMonitor(threading.Thread):
-    logger = None
+
+    logger = logging.getLogger("JobMonitor")
     
     runningStates = ['IDLE', 'RUNNING', 'REALLY-RUNNING']
     finalStates = ['DONE-OK', 'DONE-FAILED', 'ABORTED', 'CANCELLED']
@@ -23,9 +25,6 @@ class JobMonitor(threading.Thread):
         self.interfaceMan = iManager
         
         self.lastNotifyTS = time.time()
-        
-        if JobMonitor.logger==None:
-            JobMonitor.logger = testsuite_utils.mainLogger.get_instance(classid="JobMonitor")
         
     def manageNotifications(self):
         pass

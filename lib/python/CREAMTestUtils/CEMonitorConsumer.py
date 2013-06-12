@@ -6,7 +6,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from OpenSSL import SSL, tsafe, crypto
 import testsuite_utils, job_utils
 import re, string
-import select, socket
+import select, socket, logging
 
 NSTable = {'cemon_types': 'http://glite.org/ce/monitorapij/types', \
                     'cemon_faults': 'http://glite.org/ce/monitorapij/faults', \
@@ -130,13 +130,10 @@ class TSafeConnection(tsafe.Connection):
 class ConsumerServer(ThreadingMixIn, HTTPServer):
     #See description in SocketServer.py about ThreadingMixIn
     
-    logger = None
+    logger = logging.getLogger("ConsumerServer")
     
     def __init__(self, address, parameters, jobTable=None, proxyMan=None):
         HTTPServer.__init__(self, address, SOAPRequestHandler)
-        
-        if ConsumerServer.logger==None:
-            ConsumerServer.logger = testsuite_utils.mainLogger.get_instance(classid='ConsumerServer')
         
         if os.environ.has_key("X509_CONSUMER_CERT") and \
             os.environ.has_key("X509_CONSUMER_KEY"):
@@ -243,7 +240,7 @@ class DummyTable:
 def main():
     import time
     import threading
-    testsuite_utils.mainLogger.setup("log4py.conf")
+    testsuite_utils.setupLogger("config/logging.conf")
     dummyObj = DummyTable(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
     consumer = ConsumerServer(('',int(sys.argv[2])), dummyObj, dummyObj)
     consumerThread = threading.Thread(target=consumer)

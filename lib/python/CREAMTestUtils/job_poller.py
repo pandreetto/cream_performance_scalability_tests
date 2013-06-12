@@ -2,13 +2,14 @@ import os, re, string
 import threading
 import time
 import popen2
+import logging
 import testsuite_utils, job_utils
 
 from submit_pool import JobSubmitterPool
 
 class JobPoller(threading.Thread):
 
-    logger = None
+    logger = logging.getLogger("JobPoller")
 
     runningStates = ['IDLE', 'RUNNING', 'REALLY-RUNNING']
     finalStates = ['DONE-OK', 'DONE-FAILED', 'ABORTED', 'CANCELLED']
@@ -32,9 +33,6 @@ class JobPoller(threading.Thread):
         self.pool = JobSubmitterPool(parameters, self, pManager)
         self.tableOfResults = {'DONE-OK': 0, 'DONE-FAILED': 0, \
                                'ABORTED': 0, 'CANCELLED': 0}
-        
-        if JobPoller.logger==None:
-            JobPoller.logger = testsuite_utils.mainLogger.get_instance(classid="JobPoller")
 
     def manageRunningState(self, currId):
         pass

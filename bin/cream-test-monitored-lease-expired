@@ -92,7 +92,7 @@ of the long options of this test'''))
 
     parameters.parseConfigFileAndOptList(sys.argv[1:], confFileName)
         
-    testsuite_utils.mainLogger.setup(parameters.logConf)
+    testsuite_utils.setupLogger(parameters.logConf)
 
     parameters.jdl = testsuite_utils.createTempJDL(parameters.leaseTime*5)
     if parameters.jdl==None:
