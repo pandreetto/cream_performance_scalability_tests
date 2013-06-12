@@ -5,7 +5,8 @@ import re, string
 import time
 import popen2
 import getopt
-import log4py
+import logging
+import logging.config
 import tty, termios, threading
 
 class BadValueException(Exception):
@@ -83,9 +84,7 @@ class Parameters:
         self._env = []
         
         self.register('help', 'b', descr='Print the man pages for this command')
-        self.register('logConf', 's', check=checkFile, descr='''\
-Set the location of the configuration file for log4py, \
-(DEFAULT as provided by log4py)''')
+        self.register('logConf', 's', check=checkFile, descr='Set the location of the configuration file for logging')
         self.register('interactive','b', optChar='', 
                       descr='Enable the test control via terminal (EXPERIMENTAL)')
         self.register('nopurge','b', optChar='',
@@ -371,19 +370,19 @@ def getCACertDir():
 class Logger:
     
     def __init__(self):
-        self.factory = None
         self.main = None
     
     def setup(self, confFile):
 
         # This is just a patch for registering the configuration file
         if confFile<>None and confFile<>'':
-            log4py.CONFIGURATION_FILES[1] = confFile
-        self.factory = log4py.Logger()
-        self.main = self.factory.get_instance(classid="main")
+            logging.config.fileConfig(confFile)
+        self.main = logging.getLogger()
         
-    def get_instance(self, classid="main"):
-        return self.factory.get_instance(classid=classid)
+    def get_instance(self, classid=""):
+        if classid=='':
+            return self.main
+        return logging.getLogger(classid)
         
     def debug(self, message):
         self.main.debug(message)

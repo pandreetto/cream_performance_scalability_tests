@@ -3,7 +3,6 @@ import threading
 import time
 import popen2
 import string
-import log4py
 from testsuite_utils import cmdTable, applicationID, mainLogger
 
 class SubmitterThread(threading.Thread):
