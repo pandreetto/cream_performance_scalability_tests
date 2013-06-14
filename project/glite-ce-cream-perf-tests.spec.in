@@ -1,0 +1,56 @@
+Summary: Performace and scalability testsuite for gLite cream computing element
+Name: glite-ce-cream-perf-tests
+Version: @PKGVERSION@
+Release: @PKGRELEASE@
+License: Apache Software License
+Vendor: EMI
+URL: http://glite.cern.ch/
+Group: Applications/Internet
+BuildArch: noarch
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+AutoReqProv: yes
+Source: %{name}.tar.gz
+
+
+%if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%endif
+
+%description
+The testsuite contains a set of executables
+that can be used to analyze the performance of all the services installed on a CE.
+
+%prep
+
+%setup -c -q
+
+%build
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}
+python setup.py install -O1 --prefix %{buildroot}/usr --install-data %{buildroot}
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root)
+/usr/bin/cream-test-*
+%{python_sitelib}/CREAMTestUtils/*.py
+%{python_sitelib}/CREAMTestUtils/*.pyc
+%{python_sitelib}/CREAMTestUtils/*.pyo
+%if 0%{?el6}
+%{python_sitelib}/*.egg-info
+%endif
+%doc /usr/share/man/man1/cream-test-*
+%dir /etc/%{name}
+%config(noreplace) /etc/%{name}/logging.conf
+
+
+%changelog
+* Fri Aug 31 2012 CREAM group <cream-support@lists.infn.it> - @PKGVERSION@-@PKGRELEASE@
+- New major release
+
+

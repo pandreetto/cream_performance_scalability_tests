@@ -5,7 +5,7 @@ from subprocess import Popen as execScript
 from distutils.core import setup
 from distutils.command.bdist_rpm import bdist_rpm as _bdist_rpm
 
-pkg_name = 'cream-perf-tests'
+pkg_name = 'glite-ce-cream-perf-tests'
 pkg_version = '1.1.0'
 pkg_release = '1'
 
